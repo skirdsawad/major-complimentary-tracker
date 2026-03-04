@@ -1,0 +1,25 @@
+.gitignore
+  044d8d20e49657a7 1-8
+CLAUDE.md
+  044d8d20e49657a7 1-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "dae64cde62e8fe75e5c6af72620b6ea8d2d4a781",
+  "prompts": {
+    "044d8d20e49657a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0c2610b4-c336-47e3-ad42-d5208e1c0224",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sirirat Kirdsawad <sirirat_k@playtorium.co.th>",
+      "messages": [],
+      "total_additions": 78,
+      "total_deletions": 0,
+      "accepted_lines": 78,
+      "overriden_lines": 0
+    }
+  }
+}
