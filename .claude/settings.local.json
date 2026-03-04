@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(cd /c/sources/major-complimentary-tracker && npx create-next-app@latest frontend-backoffice --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker && npx create-next-app@latest frontend-counter --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker && echo '{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\"}' | npx --yes create-next-app@latest frontend-backoffice --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack --yes 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker && echo '{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\"}' | npx --yes create-next-app@latest frontend-counter --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack --yes 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker/frontend-backoffice && npx --yes shadcn@latest init -d --yes 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker/frontend-counter && npx --yes shadcn@latest init -d --yes 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker/frontend-backoffice && npx shadcn@latest add button card table input label --yes 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker/frontend-counter && npx shadcn@latest add button card input label --yes 2>&1)",
+      "Bash(cd /c/sources/major-complimentary-tracker && npx --yes @nestjs/cli@latest new backend --package-manager npm --skip-git --language ts 2>&1)"
+    ]
+  }
+}
