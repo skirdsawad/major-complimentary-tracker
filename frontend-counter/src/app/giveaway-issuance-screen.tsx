@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, FormEvent } from 'react';
+import dynamic from 'next/dynamic';
+import { Camera } from 'lucide-react';
 import { useBranch } from '@/contexts/branch-context';
 import { getBranchStockBalances, issueGiveaway } from '@/services/branch-stock.service';
 import { getActiveGiveawayItems } from '@/services/giveaway-item.service';
@@ -12,6 +14,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+
+const QrScannerDialog = dynamic(
+  () => import('@/components/qr-scanner-dialog').then((mod) => mod.QrScannerDialog),
+  { ssr: false },
+);
 
 enum FeedbackType {
   SUCCESS = 'success',
@@ -36,6 +43,7 @@ export function GiveawayIssuanceScreen() {
   const [quantity, setQuantity] = useState('1');
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   const fetchStocks = useCallback(() => {
     if (!selectedBranch) {
@@ -79,6 +87,14 @@ export function GiveawayIssuanceScreen() {
 
   function handleTicketNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
     setTicketNumber(e.target.value);
+  }
+
+  function handleScanResult(value: string) {
+    setTicketNumber(value);
+  }
+
+  function handleOpenScanner() {
+    setScannerOpen(true);
   }
 
   function handleItemChange(value: string) {
@@ -196,13 +212,19 @@ export function GiveawayIssuanceScreen() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="ticketNumber">Ticket Number *</Label>
-                <Input
-                  id="ticketNumber"
-                  value={ticketNumber}
-                  onChange={handleTicketNumberChange}
-                  placeholder="Enter ticket number"
-                  required
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="ticketNumber"
+                    value={ticketNumber}
+                    onChange={handleTicketNumberChange}
+                    placeholder="Enter or scan ticket number"
+                    required
+                    className="flex-1"
+                  />
+                  <Button type="button" variant="outline" size="icon" onClick={handleOpenScanner}>
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="item">Item *</Label>
@@ -240,6 +262,11 @@ export function GiveawayIssuanceScreen() {
             </form>
           </CardContent>
         </Card>
+        <QrScannerDialog
+          open={scannerOpen}
+          onOpenChange={setScannerOpen}
+          onScan={handleScanResult}
+        />
       </main>
     </div>
   );
