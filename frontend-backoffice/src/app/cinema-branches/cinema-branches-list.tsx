@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Pencil, Ban } from 'lucide-react';
-import { GiveawayItem, ItemType } from '@/types/giveaway-item';
+import { CinemaBranch } from '@/types/cinema-branch';
 import {
-  deactivateGiveawayItem,
-  getGiveawayItems,
-} from '@/services/giveaway-item.service';
+  deactivateCinemaBranch,
+  getCinemaBranches,
+} from '@/services/cinema-branch.service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -35,64 +35,54 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-const ALL_TYPES = 'ALL_TYPES';
 const ALL_STATUS = 'ALL_STATUS';
 
-export function GiveawayItemsList() {
-  const [items, setItems] = useState<GiveawayItem[]>([]);
+export function CinemaBranchesList() {
+  const [branches, setBranches] = useState<CinemaBranch[]>([]);
   const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState(ALL_TYPES);
   const [statusFilter, setStatusFilter] = useState(ALL_STATUS);
   const [deactivateTarget, setDeactivateTarget] =
-    useState<GiveawayItem | null>(null);
+    useState<CinemaBranch | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchItems = useCallback(async () => {
+  const fetchBranches = useCallback(async () => {
     setLoading(true);
     try {
       const params: {
         search?: string;
-        itemType?: ItemType;
         isActive?: boolean;
       } = {};
 
       if (search) {
         params.search = search;
       }
-      if (typeFilter !== ALL_TYPES) {
-        params.itemType = typeFilter as ItemType;
-      }
       if (statusFilter !== ALL_STATUS) {
         params.isActive = statusFilter === 'true';
       }
 
-      const data = await getGiveawayItems(params);
-      setItems(data);
+      const data = await getCinemaBranches(params);
+      setBranches(data);
     } catch (error) {
-      console.error('Failed to fetch items:', error);
+      console.error('Failed to fetch branches:', error);
     } finally {
       setLoading(false);
     }
-  }, [search, typeFilter, statusFilter]);
+  }, [search, statusFilter]);
 
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    fetchBranches();
+  }, [fetchBranches]);
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
     setSearch(e.target.value);
-  }
-
-  function handleTypeFilterChange(value: string) {
-    setTypeFilter(value);
   }
 
   function handleStatusFilterChange(value: string) {
     setStatusFilter(value);
   }
 
-  function handleDeactivateClick(item: GiveawayItem) {
-    setDeactivateTarget(item);
+  function handleDeactivateClick(branch: CinemaBranch) {
+    setDeactivateTarget(branch);
   }
 
   function handleDeactivateDialogClose() {
@@ -105,20 +95,20 @@ export function GiveawayItemsList() {
     }
 
     try {
-      await deactivateGiveawayItem(deactivateTarget.item_code);
+      await deactivateCinemaBranch(deactivateTarget.branch_code);
       setDeactivateTarget(null);
-      fetchItems();
+      fetchBranches();
     } catch (error) {
-      console.error('Failed to deactivate item:', error);
+      console.error('Failed to deactivate branch:', error);
     }
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Giveaway Items</h1>
+        <h1 className="text-2xl font-bold">Cinema Branches</h1>
         <Button asChild>
-          <Link href="/giveaway-items/create">Create Item</Link>
+          <Link href="/cinema-branches/create">Create Branch</Link>
         </Button>
       </div>
 
@@ -129,19 +119,6 @@ export function GiveawayItemsList() {
           onChange={handleSearchChange}
           className="max-w-sm"
         />
-        <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_TYPES}>All Types</SelectItem>
-            {Object.values(ItemType).map((type) => (
-              <SelectItem key={type} value={type}>
-                {type}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by status" />
@@ -157,9 +134,8 @@ export function GiveawayItemsList() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Item Code</TableHead>
-            <TableHead>Item Name</TableHead>
-            <TableHead>Type</TableHead>
+            <TableHead>Branch Code</TableHead>
+            <TableHead>Branch Name</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -167,49 +143,46 @@ export function GiveawayItemsList() {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center">
+              <TableCell colSpan={4} className="text-center">
                 Loading...
               </TableCell>
             </TableRow>
-          ) : items.length === 0 ? (
+          ) : branches.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center">
-                No items found.
+              <TableCell colSpan={4} className="text-center">
+                No branches found.
               </TableCell>
             </TableRow>
           ) : (
-            items.map((item) => (
-              <TableRow key={item.item_code}>
+            branches.map((branch) => (
+              <TableRow key={branch.branch_code}>
                 <TableCell className="font-medium">
-                  {item.item_code}
+                  {branch.branch_code}
                 </TableCell>
-                <TableCell>{item.item_name}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{item.item_type}</Badge>
-                </TableCell>
+                <TableCell>{branch.branch_name}</TableCell>
                 <TableCell>
                   <Badge
-                    variant={item.is_active ? 'default' : 'secondary'}
+                    variant={branch.is_active ? 'default' : 'secondary'}
                   >
-                    {item.is_active ? 'Active' : 'Inactive'}
+                    {branch.is_active ? 'Active' : 'Inactive'}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button variant="outline" size="icon" className="h-8 w-8" asChild title="Edit">
                       <Link
-                        href={`/giveaway-items/${item.item_code}/edit`}
+                        href={`/cinema-branches/${branch.branch_code}/edit`}
                       >
                         <Pencil className="h-4 w-4" />
                       </Link>
                     </Button>
-                    {item.is_active && (
+                    {branch.is_active && (
                       <Button
                         variant="destructive"
                         size="icon"
                         className="h-8 w-8"
                         title="Deactivate"
-                        onClick={() => handleDeactivateClick(item)}
+                        onClick={() => handleDeactivateClick(branch)}
                       >
                         <Ban className="h-4 w-4" />
                       </Button>
@@ -228,11 +201,11 @@ export function GiveawayItemsList() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Deactivate Item</DialogTitle>
+            <DialogTitle>Deactivate Branch</DialogTitle>
             <DialogDescription>
               Are you sure you want to deactivate &quot;
-              {deactivateTarget?.item_name}&quot;? This item will no longer
-              be available for giveaway.
+              {deactivateTarget?.branch_name}&quot;? This branch will no
+              longer be available for giveaway distribution.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

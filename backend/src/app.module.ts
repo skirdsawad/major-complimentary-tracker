@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GiveawayItemsModule } from './giveaway-items/giveaway-items.module';
+import { CinemaBranchesModule } from './cinema-branches/cinema-branches.module';
+import { BranchStockModule } from './branch-stock/branch-stock.module';
 
 @Module({
-  imports: [GiveawayItemsModule],
+  imports: [GiveawayItemsModule, CinemaBranchesModule, BranchStockModule],
   controllers: [AppController],
   providers: [AppService],
 })

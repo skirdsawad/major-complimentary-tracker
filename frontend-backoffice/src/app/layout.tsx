@@ -39,6 +39,18 @@ export default function RootLayout({
             >
               Giveaway Items
             </Link>
+            <Link
+              href="/cinema-branches"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Cinema Branches
+            </Link>
+            <Link
+              href="/stock-management"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Stock Management
+            </Link>
           </div>
         </nav>
         <main>{children}</main>
