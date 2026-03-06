@@ -1,6 +1,6 @@
 import { BranchItemStock } from '@/types/branch-stock';
 
-const API_BASE = 'http://localhost:5000/api/branch-stock';
+const API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api/branch-stock`;
 
 export async function getBranchStockBalances(
   branchCode: string,

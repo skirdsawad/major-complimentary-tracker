@@ -1,6 +1,6 @@
 import { GiveawayItem, ItemType } from '@/types/giveaway-item';
 
-const API_BASE = 'http://localhost:5000/api/giveaway-items';
+const API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api/giveaway-items`;
 
 export interface SearchParams {
   search?: string;

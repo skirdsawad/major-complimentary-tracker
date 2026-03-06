@@ -1,6 +1,6 @@
 import { CinemaBranch } from '@/types/cinema-branch';
 
-const API_BASE = 'http://localhost:5000/api/cinema-branches';
+const API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api/cinema-branches`;
 
 export async function getActiveCinemaBranches(): Promise<CinemaBranch[]> {
   const url = new URL(API_BASE);

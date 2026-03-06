@@ -4,7 +4,7 @@ import {
   StockTransactionType,
 } from '@/types/branch-stock';
 
-const API_BASE = 'http://localhost:5000/api/branch-stock';
+const API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api/branch-stock`;
 
 export interface SearchStockParams {
   branch_code?: string;
