@@ -1,0 +1,80 @@
+backend/src/app.module.ts
+  cdc46a22d1e50626 2-3,13-32
+backend/src/giveaway-items/giveaway-items.module.ts
+  cdc46a22d1e50626 2,5,8,10-11
+backend/src/branch-stock/entities/branch-item-stock.entity.ts
+  cdc46a22d1e50626 1-26
+backend/src/giveaway-items/giveaway-items.service.ts
+  cdc46a22d1e50626 6-8,16-17,20-21,24-37,39-40,43,45,47-48,50,53,56-59,70-73,81,86,88,91,93-97,99,105,107,110-113,115,121,123
+backend/src/cinema-branches/entities/cinema-branch.entity.ts
+  cdc46a22d1e50626 1-25
+backend/src/giveaway-items/giveaway-items.controller.ts
+  cdc46a22d1e50626 11,21-24,28-31,35-38,42,45-46,50-53
+backend/src/branch-stock/branch-stock.service.ts
+  cdc46a22d1e50626 6-7,10-11,21-24,29-30,33,37,40,43,45-50,61-63,65-68,72-73,77,79-80,83,86,93,97,100,110-111,113-116,121,126,132,134-135,139,141-142,146,153,160,164,167-170,173,177,181,184-187,190,196-203,211-214,216,222,229-230,232,243,246-250
+backend/src/branch-stock/branch-stock.module.ts
+  cdc46a22d1e50626 2,5-8,11-14,17
+frontend-backoffice/src/app/stock-management/stock-management-view.tsx
+  0f5b94ab8896bfcf 241-248,266-270,272,274,276,580-587
+backend/src/branch-stock/entities/stock-transaction.entity.ts
+  cdc46a22d1e50626 1-40
+backend/src/branch-stock/branch-stock.controller.ts
+  cdc46a22d1e50626 3-4,16-19,23,26-27,29,34-35,39-42,46-49,59-62
+backend/src/cinema-branches/cinema-branches.module.ts
+  cdc46a22d1e50626 2,5,8,10-11
+backend/src/cinema-branches/cinema-branches.service.ts
+  cdc46a22d1e50626 6-8,16-17,20-21,24-25,27-33,35-37,39-42,45,48-51,62-65,73,77,79,82,84-88,90,96,98,101-104,106,112,114
+frontend-counter/src/app/giveaway-issuance-screen.tsx
+  beb9586697af77b5 166-169,193-194,196,254
+  0f5b94ab8896bfcf 126-135,255-257,260-261,263,265-266,280-284
+backend/src/cinema-branches/cinema-branches.controller.ts
+  cdc46a22d1e50626 11,23-26,30-33,37-40,44,47-48,52-55
+backend/src/giveaway-items/entities/giveaway-item.entity.ts
+  cdc46a22d1e50626 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "bdcb83c3bcffc5ec2dfbf16f6d4a5cc35afa1c4d",
+  "prompts": {
+    "0f5b94ab8896bfcf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b48f9f99-c3c4-4f0b-aa16-9e4871aca411",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sirirat Kirdsawad <sirirat_k@playtorium.co.th>",
+      "messages": [],
+      "total_additions": 988,
+      "total_deletions": 938,
+      "accepted_lines": 131,
+      "overriden_lines": 0
+    },
+    "beb9586697af77b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad56536d-a580-4af3-a77d-85a221fb5b83",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sirirat Kirdsawad <sirirat_k@playtorium.co.th>",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 4,
+      "accepted_lines": 8,
+      "overriden_lines": 0
+    },
+    "cdc46a22d1e50626": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "decdb81e-9998-4298-a2b7-8ad99561c1ea",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Sirirat Kirdsawad <sirirat_k@playtorium.co.th>",
+      "messages": [],
+      "total_additions": 925,
+      "total_deletions": 794,
+      "accepted_lines": 544,
+      "overriden_lines": 0
+    }
+  }
+}
