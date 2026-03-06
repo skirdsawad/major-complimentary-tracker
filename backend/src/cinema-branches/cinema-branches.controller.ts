@@ -8,6 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CinemaBranchesService } from './cinema-branches.service';
+import { CinemaBranch } from './entities/cinema-branch.entity';
 import { CreateCinemaBranchDto } from './dto/create-cinema-branch.dto';
 import { UpdateCinemaBranchDto } from './dto/update-cinema-branch.dto';
 import { SearchCinemaBranchesDto } from './dto/search-cinema-branches.dto';
@@ -19,30 +20,38 @@ export class CinemaBranchesController {
   ) {}
 
   @Get()
-  findAll(@Query() query: SearchCinemaBranchesDto) {
-    return this.cinemaBranchesService.findAll(query);
+  async findAll(
+    @Query() query: SearchCinemaBranchesDto,
+  ): Promise<CinemaBranch[]> {
+    return await this.cinemaBranchesService.findAll(query);
   }
 
   @Get(':branchCode')
-  findOne(@Param('branchCode') branchCode: string) {
-    return this.cinemaBranchesService.findOne(branchCode);
+  async findOne(
+    @Param('branchCode') branchCode: string,
+  ): Promise<CinemaBranch> {
+    return await this.cinemaBranchesService.findOne(branchCode);
   }
 
   @Post()
-  create(@Body() dto: CreateCinemaBranchDto) {
-    return this.cinemaBranchesService.create(dto);
+  async create(
+    @Body() dto: CreateCinemaBranchDto,
+  ): Promise<CinemaBranch> {
+    return await this.cinemaBranchesService.create(dto);
   }
 
   @Patch(':branchCode')
-  update(
+  async update(
     @Param('branchCode') branchCode: string,
     @Body() dto: UpdateCinemaBranchDto,
-  ) {
-    return this.cinemaBranchesService.update(branchCode, dto);
+  ): Promise<CinemaBranch> {
+    return await this.cinemaBranchesService.update(branchCode, dto);
   }
 
   @Patch(':branchCode/deactivate')
-  deactivate(@Param('branchCode') branchCode: string) {
-    return this.cinemaBranchesService.deactivate(branchCode);
+  async deactivate(
+    @Param('branchCode') branchCode: string,
+  ): Promise<CinemaBranch> {
+    return await this.cinemaBranchesService.deactivate(branchCode);
   }
 }

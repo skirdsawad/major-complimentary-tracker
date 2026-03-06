@@ -238,6 +238,14 @@ export function StockManagementView() {
     }
   }
 
+  function getStockBalance(branchCode: string, itemCode: string): number {
+    const stock = stocks.find(
+      (s) => s.branch_code === branchCode && s.item_code === itemCode,
+    );
+
+    return stock ? stock.quantity : 0;
+  }
+
   async function handleAdjustSubmit(e: React.FormEvent) {
     e.preventDefault();
     setFormError('');
@@ -253,6 +261,17 @@ export function StockManagementView() {
       setFormError('Quantity must be at least 1.');
 
       return;
+    }
+
+    if (formTransactionType === StockTransactionType.ADJUSTMENT_MINUS) {
+      const currentBalance = getStockBalance(formBranchCode, formItemCode);
+      if (qty > currentBalance) {
+        setFormError(
+          `Cannot subtract ${qty}. Current stock balance is ${currentBalance}.`,
+        );
+
+        return;
+      }
     }
 
     setFormSubmitting(true);
@@ -558,6 +577,14 @@ export function StockManagementView() {
                 onChange={handleFormQuantityChange}
                 placeholder="Enter quantity"
               />
+              {formTransactionType === StockTransactionType.ADJUSTMENT_MINUS &&
+                formBranchCode &&
+                formItemCode &&
+                parseInt(formQuantity, 10) > getStockBalance(formBranchCode, formItemCode) && (
+                  <p className="text-sm text-destructive">
+                    Exceeds current stock balance ({getStockBalance(formBranchCode, formItemCode)})
+                  </p>
+                )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="adjust-reason">Reason</Label>

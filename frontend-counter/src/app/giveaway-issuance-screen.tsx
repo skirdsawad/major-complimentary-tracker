@@ -123,6 +123,16 @@ export function GiveawayIssuanceScreen() {
       return;
     }
 
+    const availableStock = getStockQuantity(selectedItemCode);
+    if (qty > availableStock) {
+      setFeedback({
+        type: FeedbackType.ERROR,
+        message: `Insufficient stock. Available: ${availableStock}, Requested: ${qty}`,
+      });
+
+      return;
+    }
+
     setSubmitting(true);
     setFeedback(null);
 
@@ -153,6 +163,10 @@ export function GiveawayIssuanceScreen() {
     }
   }
 
+  const availableItems = items.filter((item) =>
+    stocks.some((s) => s.item_code === item.item_code),
+  );
+
   const isFormValid = ticketNumber.trim() && selectedItemCode && parseInt(quantity, 10) >= 1;
 
   return (
@@ -176,10 +190,10 @@ export function GiveawayIssuanceScreen() {
           <span className="text-sm font-medium text-muted-foreground">Stock:</span>
           {loadingStocks || loadingItems ? (
             <span className="text-sm text-muted-foreground">Loading...</span>
-          ) : items.length === 0 ? (
-            <span className="text-sm text-muted-foreground">No items configured</span>
+          ) : availableItems.length === 0 ? (
+            <span className="text-sm text-muted-foreground">No items available at this branch</span>
           ) : (
-            items.map((item) => {
+            availableItems.map((item) => {
               const qty = getStockQuantity(item.item_code);
 
               return (
@@ -237,11 +251,19 @@ export function GiveawayIssuanceScreen() {
                     <SelectValue placeholder={loadingItems ? 'Loading...' : 'Select an item'} />
                   </SelectTrigger>
                   <SelectContent>
-                    {items.map((item) => (
-                      <SelectItem key={item.item_code} value={item.item_code}>
-                        {item.item_name} (Stock: {getStockQuantity(item.item_code)})
-                      </SelectItem>
-                    ))}
+                    {availableItems.map((item) => {
+                      const stockQty = getStockQuantity(item.item_code);
+
+                      return (
+                        <SelectItem
+                          key={item.item_code}
+                          value={item.item_code}
+                          disabled={stockQty <= 0}
+                        >
+                          {item.item_name} (Stock: {stockQty})
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -255,6 +277,11 @@ export function GiveawayIssuanceScreen() {
                   onChange={handleQuantityChange}
                   required
                 />
+                {selectedItemCode && parseInt(quantity, 10) > getStockQuantity(selectedItemCode) && (
+                  <p className="text-sm text-destructive">
+                    Exceeds available stock ({getStockQuantity(selectedItemCode)})
+                  </p>
+                )}
               </div>
               <Button type="submit" className="w-full" disabled={!isFormValid || submitting}>
                 {submitting ? 'Issuing...' : 'Issue Giveaway'}

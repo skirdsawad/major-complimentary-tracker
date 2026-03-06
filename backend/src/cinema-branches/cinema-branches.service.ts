@@ -3,44 +3,52 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { JsonStorageService } from '../common/services/json-storage.service';
-import { CinemaBranch } from './interfaces/cinema-branch.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ILike, Repository } from 'typeorm';
+import { CinemaBranch } from './entities/cinema-branch.entity';
 import { CreateCinemaBranchDto } from './dto/create-cinema-branch.dto';
 import { UpdateCinemaBranchDto } from './dto/update-cinema-branch.dto';
 import { SearchCinemaBranchesDto } from './dto/search-cinema-branches.dto';
 
-const STORAGE_FILE = 'cinema-branches.json';
-
 @Injectable()
 export class CinemaBranchesService {
-  constructor(private readonly jsonStorageService: JsonStorageService) {}
+  constructor(
+    @InjectRepository(CinemaBranch)
+    private readonly cinemaBranchRepository: Repository<CinemaBranch>,
+  ) {}
 
-  findAll(query: SearchCinemaBranchesDto): CinemaBranch[] {
-    let branches =
-      this.jsonStorageService.read<CinemaBranch>(STORAGE_FILE);
+  async findAll(query: SearchCinemaBranchesDto): Promise<CinemaBranch[]> {
+    const where: any[] = [];
 
     if (query.search) {
-      const term = query.search.toLowerCase();
-      branches = branches.filter(
-        (branch) =>
-          branch.branch_code.toLowerCase().includes(term) ||
-          branch.branch_name.toLowerCase().includes(term),
+      const term = `%${query.search}%`;
+      const baseWhere: any = {};
+
+      if (query.isActive !== undefined) {
+        baseWhere.is_active = query.isActive;
+      }
+
+      where.push(
+        { ...baseWhere, branch_code: ILike(term) },
+        { ...baseWhere, branch_name: ILike(term) },
       );
+    } else {
+      const baseWhere: any = {};
+
+      if (query.isActive !== undefined) {
+        baseWhere.is_active = query.isActive;
+      }
+
+      where.push(baseWhere);
     }
 
-    if (query.isActive !== undefined) {
-      branches = branches.filter(
-        (branch) => branch.is_active === query.isActive,
-      );
-    }
-
-    return branches;
+    return await this.cinemaBranchRepository.find({ where });
   }
 
-  findOne(branchCode: string): CinemaBranch {
-    const branches =
-      this.jsonStorageService.read<CinemaBranch>(STORAGE_FILE);
-    const branch = branches.find((b) => b.branch_code === branchCode);
+  async findOne(branchCode: string): Promise<CinemaBranch> {
+    const branch = await this.cinemaBranchRepository.findOneBy({
+      branch_code: branchCode,
+    });
 
     if (!branch) {
       throw new NotFoundException(
@@ -51,12 +59,10 @@ export class CinemaBranchesService {
     return branch;
   }
 
-  create(dto: CreateCinemaBranchDto): CinemaBranch {
-    const branches =
-      this.jsonStorageService.read<CinemaBranch>(STORAGE_FILE);
-    const existing = branches.find(
-      (b) => b.branch_code === dto.branch_code,
-    );
+  async create(dto: CreateCinemaBranchDto): Promise<CinemaBranch> {
+    const existing = await this.cinemaBranchRepository.findOneBy({
+      branch_code: dto.branch_code,
+    });
 
     if (existing) {
       throw new ConflictException(
@@ -64,63 +70,47 @@ export class CinemaBranchesService {
       );
     }
 
-    const now = new Date().toISOString();
-    const newBranch: CinemaBranch = {
+    const newBranch = this.cinemaBranchRepository.create({
       branch_code: dto.branch_code,
       branch_name: dto.branch_name,
       is_active: true,
-      created_at: now,
-      updated_at: now,
-    };
+    });
 
-    branches.push(newBranch);
-    this.jsonStorageService.write(STORAGE_FILE, branches);
-
-    return newBranch;
+    return await this.cinemaBranchRepository.save(newBranch);
   }
 
-  update(branchCode: string, dto: UpdateCinemaBranchDto): CinemaBranch {
-    const branches =
-      this.jsonStorageService.read<CinemaBranch>(STORAGE_FILE);
-    const index = branches.findIndex((b) => b.branch_code === branchCode);
+  async update(
+    branchCode: string,
+    dto: UpdateCinemaBranchDto,
+  ): Promise<CinemaBranch> {
+    const branch = await this.cinemaBranchRepository.findOneBy({
+      branch_code: branchCode,
+    });
 
-    if (index === -1) {
+    if (!branch) {
       throw new NotFoundException(
         `Cinema branch with code "${branchCode}" not found`,
       );
     }
 
-    const updated: CinemaBranch = {
-      ...branches[index],
-      ...dto,
-      updated_at: new Date().toISOString(),
-    };
+    Object.assign(branch, dto);
 
-    branches[index] = updated;
-    this.jsonStorageService.write(STORAGE_FILE, branches);
-
-    return updated;
+    return await this.cinemaBranchRepository.save(branch);
   }
 
-  deactivate(branchCode: string): CinemaBranch {
-    const branches =
-      this.jsonStorageService.read<CinemaBranch>(STORAGE_FILE);
-    const index = branches.findIndex((b) => b.branch_code === branchCode);
+  async deactivate(branchCode: string): Promise<CinemaBranch> {
+    const branch = await this.cinemaBranchRepository.findOneBy({
+      branch_code: branchCode,
+    });
 
-    if (index === -1) {
+    if (!branch) {
       throw new NotFoundException(
         `Cinema branch with code "${branchCode}" not found`,
       );
     }
 
-    branches[index] = {
-      ...branches[index],
-      is_active: false,
-      updated_at: new Date().toISOString(),
-    };
+    branch.is_active = false;
 
-    this.jsonStorageService.write(STORAGE_FILE, branches);
-
-    return branches[index];
+    return await this.cinemaBranchRepository.save(branch);
   }
 }
